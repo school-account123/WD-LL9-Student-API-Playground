@@ -1,89 +1,178 @@
-// ========================================
-// API PLAYGROUND - STUDENT PRACTICE
-// ========================================
+/* ============================================================
+   COUNTRY EXPLORER — script.js
+   ------------------------------------------------------------
+   THE PATTERN (this is the whole lab):
+     1. Get user input
+     2. Fetch data from an API
+     3. Convert the response to JSON
+     4. Pull the piece of data you need off the response
+     5. Drop it into the page with .textContent / .src
 
-// STEP 1: Choose Your API
-// Browse free APIs at: https://github.com/public-apis/public-apis
-// Examples:
-//   - Cat Facts: https://catfact.ninja/fact
-//   - Dog Images: https://dog.ceo/api/breeds/image/random
-//   - Advice Slip: https://api.adviceslip.com/advice
-//   - Bored API: https://www.boredapi.com/api/activity
+   Steps 1-6 below are built together as an instructor demo.
+   Steps 7-10 are your team's mission — they reuse the exact
+   same pattern shown in Step 6, just with different data.
+   ============================================================ */
 
-// STEP 2: Test Your API
-// Open your chosen API URL in your browser to see the JSON response
-// Make sure it works before continuing!
+// --- Element references (grab everything once, up front) -----
+const searchBtn     = document.getElementById('searchBtn');
+const countryInput  = document.getElementById('countryInput');
+const loadingEl      = document.getElementById('loading');
+const errorEl        = document.getElementById('errorMessage');
+const resultCard     = document.getElementById('resultCard');
 
-// STEP 3: Paste your API URL here
-const API_URL = "PASTE_API_URL_HERE";
+const flagImg        = document.getElementById('flagImg');
+const countryNameEl  = document.getElementById('countryName');
+const capitalEl      = document.getElementById('capitalValue');
+const regionEl       = document.getElementById('regionValue');
+const populationEl   = document.getElementById('populationValue');
+const languagesEl    = document.getElementById('languagesValue');
 
-// ========================================
-// STEP 4: Write Your Fetch Code
-// ========================================
-// TODO: Uncomment the code below and replace PASTE_API_URL_HERE with your API_URL variable
 
-/*
-fetch("PASTE_API_URL_HERE")
-    .then(response => response.json())
-    .then(data => {
-        console.log(data);
-    });
-*/
+/* ------------------------------------------------------------
+   STEP 1: Connect the button's click event.
+   ------------------------------------------------------------ */
+searchBtn.addEventListener('click', fetchCountry);
 
-// After uncommenting, save and refresh your page.
-// Open the browser console (F12) to see your data!
-
-// ========================================
-// STEP 5: Display Data on Page
-// ========================================
-// TODO:
-// 1. Go to index.html and add: <div id="output"></div>
-// 2. Uncomment the code below
-// 3. Update the data property to match your API (e.g., data.fact, data.message, etc.)
-
-/*
-const output = document.getElementById("output");
-
-fetch(API_URL)
-    .then(response => response.json())
-    .then(data => {
-        output.innerText = data.fact; // TODO: Change 'fact' to match your API's data structure
-    });
-*/
-
-// ========================================
-// STEP 6: Add a Button to Fetch New Data
-// ========================================
-// TODO:
-// 1. Go to index.html and add: <button id="fetch-btn">Get New Data</button>
-// 2. Uncomment the code below
-
-/*
-const button = document.getElementById("fetch-btn");
-
-button.addEventListener("click", function() {
-    fetch(API_URL)
-        .then(response => response.json())
-        .then(data => {
-            output.innerText = data.fact; // TODO: Change 'fact' to match your API's data structure
-        });
+// Bonus UX: let people press Enter instead of clicking.
+countryInput.addEventListener('keydown', function (event) {
+  if (event.key === 'Enter') fetchCountry();
 });
-*/
 
-// ========================================
-// STEP 7: BONUS - Add Image Support (if your API includes images)
-// ========================================
-// TODO: If your API returns images, uncomment and modify:
 
-/*
-button.addEventListener("click", function() {
-    fetch(API_URL)
-        .then(response => response.json())
-        .then(data => {
-            output.innerHTML = `
-                <img src="${data.image}" width="300">
-                <p>${data.fact}</p>
-            `;
-        });
-});
-*/
+/* ------------------------------------------------------------
+   STEP 2: Create fetchCountry()
+   ------------------------------------------------------------ */
+async function fetchCountry() {
+
+  const countryName = countryInput.value.trim();
+  if (!countryName) return; // nothing typed, nothing to do
+
+  /* ------------------------------------------------------------
+     STEP 3: Show "Loading..."
+     ------------------------------------------------------------ */
+  showLoading();
+
+  try {
+
+    /* ------------------------------------------------------------
+       STEP 4: Build the fetch request
+       ------------------------------------------------------------ */
+    const url = `https://restcountries.com/v3.1/name/${countryName}?fullText=true`;
+    const response = await fetch(url);
+
+    if (!response.ok) {
+      throw new Error('Country not found');
+    }
+
+    /* ------------------------------------------------------------
+       STEP 5: Convert response -> JSON
+       ------------------------------------------------------------ */
+    const data = await response.json();
+    const country = data[0]; // this API always returns an array
+
+    /* ------------------------------------------------------------
+       STEP 6: Display ONE property. Start simple.
+       Display only: Country Name.
+
+       Notice the pattern:
+         1. read a value off `country`
+         2. assign it to an element's .textContent
+       Every step below is this same pattern, just a
+       different property and a different element.
+       ------------------------------------------------------------ */
+    countryNameEl.textContent = country.name.common;
+
+
+    /* ============================================================
+       TEAM BUILD STARTS HERE
+       The instructor demo stops at Step 6. Steps 7-10 are your
+       team's mission. Use the exact pattern from Step 6 above.
+       ============================================================ */
+
+    /* ------------------------------------------------------------
+       STEP 7: Display the Flag
+       ------------------------------------------------------------
+       TODO:
+       - The image URL lives at:  country.flags.png
+       - Set flagImg.src to that URL
+       - Set flagImg.alt to something descriptive, e.g.
+         `Flag of ${country.name.common}`
+
+       flagImg.src = ???
+       flagImg.alt = ???
+       ------------------------------------------------------------ */
+
+
+    /* ------------------------------------------------------------
+       STEP 8: Display Capital, Region, Population
+       ------------------------------------------------------------
+       TODO:
+       - Capital:    country.capital[0]     <-- careful, it's an ARRAY
+       - Region:     country.region
+       - Population: country.population      <-- a raw number
+
+       Hint: number.toLocaleString() formats 129000000 as
+       "129,000,000" — much easier to read.
+
+       capitalEl.textContent    = ???
+       regionEl.textContent     = ???
+       populationEl.textContent = ???
+       ------------------------------------------------------------ */
+
+
+    /* ------------------------------------------------------------
+       STEP 9: Display Languages
+       ------------------------------------------------------------
+       TODO:
+       - country.languages is an OBJECT, not an array, e.g.:
+             { fra: "French", eng: "English" }
+       - Object.values(country.languages) turns that into an
+         array of names: ["French", "English"]
+       - .join(", ") turns that array into one readable string:
+             "French, English"
+
+       languagesEl.textContent = ???
+       ------------------------------------------------------------ */
+
+
+    /* ------------------------------------------------------------
+       STEP 10a: Improve the experience — clean up on SUCCESS
+       ------------------------------------------------------------
+       TODO:
+       - Hide the loading state:      hideLoading();
+       - Reveal the result card:      resultCard.classList.remove('hidden');
+       - Make sure old errors are gone: errorEl.classList.add('hidden');
+       ------------------------------------------------------------ */
+
+
+  } catch (error) {
+
+    /* ------------------------------------------------------------
+       STEP 10b: Improve the experience — error handling
+       ------------------------------------------------------------
+       TODO:
+       - Hide the loading state
+       - Hide the result card (a previous search may have shown one)
+       - Show a friendly message in errorEl, e.g.:
+           errorEl.textContent =
+             `We couldn't find "${countryName}". Check the spelling and try again.`;
+           errorEl.classList.remove('hidden');
+       ------------------------------------------------------------ */
+    console.error(error);
+
+  }
+}
+
+
+/* ------------------------------------------------------------
+   Helper functions — already built for you.
+   ------------------------------------------------------------ */
+function showLoading() {
+  loadingEl.classList.remove('hidden');
+  errorEl.classList.add('hidden');
+  resultCard.classList.add('hidden');
+}
+
+function hideLoading() {
+  loadingEl.classList.add('hidden');
+}
