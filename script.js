@@ -53,7 +53,20 @@ async function fetchCountry() {
   showLoading();
 
   try {
+    const API_Key = 'rc_live_ae35651b63dc474bb81caf07c46edb83'
+    const url = 'https://api.restcountries.com/countries/v5?q=${countryname}'
+    {encodeURIComponent(countryName)}
 
+    const response = await fetch(url, {
+      headers:{ 'Authorization' :'Bearer ${API_KEY}'}
+    });
+
+    const data = await response.json();
+    console.log(data)
+
+  } catch (error) {
+    console.error(error);
+  }
     /* ------------------------------------------------------------
        STEP 4: Build the fetch request
        ------------------------------------------------------------ */
